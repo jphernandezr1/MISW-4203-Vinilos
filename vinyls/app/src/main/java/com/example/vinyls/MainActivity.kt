@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         VinylsNavBar(
-                            selectedTab = 1,
+                            selectedTab = 2,
                             onTabSelected = {  }
                         )
                     },
@@ -53,22 +53,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     VinylsTheme {
-        Greeting("Android")
+        Text("Android")
     }
 }
-
 
 
 @Composable

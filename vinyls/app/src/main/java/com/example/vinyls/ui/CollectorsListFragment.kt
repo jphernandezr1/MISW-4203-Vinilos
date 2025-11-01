@@ -107,7 +107,7 @@ fun CollectorsListScreen() {
 //                    containerColor = Color(0xFF1E2A3A),
 //                    focusedBorderColor = Color.Transparent,
 //                    unfocusedBorderColor = Color.Transparent,
-//                    Color = Color.White
+//                    focusedTextColor = Color.White
 //                ),
                 singleLine = true
             )
