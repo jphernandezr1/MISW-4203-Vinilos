@@ -20,10 +20,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             VinylsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    // Show Albums screen
+                    androidx.compose.foundation.layout.Box(modifier = Modifier.padding(innerPadding)) {
+                        com.example.vinyls.ui.AlbumsScreen()
+                    }
                 }
             }
         }
