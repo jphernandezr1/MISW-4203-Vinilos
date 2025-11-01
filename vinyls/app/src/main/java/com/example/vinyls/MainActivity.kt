@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -78,7 +79,7 @@ fun VinylsNavBar(
             onClick = { onTabSelected(0) },
             icon = {
                 Icon(
-                    painter = painterResource(id = android.R.drawable.ic_menu_view),
+                    Icons.Default.PlayArrow,
                     contentDescription = "Catalog",
                     modifier = Modifier.size(28.dp)
                 )
