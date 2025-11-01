@@ -31,19 +31,15 @@ class CollectorsViewModel(application: Application) :  AndroidViewModel(applicat
     }
 
     private fun refreshDataFromNetwork() {
-        try {
-            viewModelScope.launch(Dispatchers.Default){
-                withContext(Dispatchers.IO){
-                    val data = collectorsRepository.refreshData()
-                    _collectors.postValue(data)
-                }
-                _eventNetworkError.postValue(false)
-                _isNetworkErrorShown.postValue(false)
+        viewModelScope.launch(Dispatchers.Default){
+            withContext(Dispatchers.IO){
+                val data = collectorsRepository.refreshData()
+                _collectors.postValue(data)
             }
+            _eventNetworkError.postValue(false)
+            _isNetworkErrorShown.postValue(false)
         }
-        catch (e:Exception){
-            _eventNetworkError.value = true
-        }
+
     }
 
     fun onNetworkErrorShown() {
