@@ -4,7 +4,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    private const val BASE_URL = "https://back-vinyls.victoriousground-8087781c.westus2.azurecontainerapps.io"
+    // Retrofit requires the base URL to end with '/'
+    private const val BASE_URL = "https://back-vinyls.victoriousground-8087781c.westus2.azurecontainerapps.io/"
 
     val api: ApiService by lazy {
         Retrofit.Builder()

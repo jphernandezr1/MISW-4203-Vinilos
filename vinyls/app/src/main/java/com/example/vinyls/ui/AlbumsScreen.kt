@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.collectAsState
 import com.example.vinyls.model.Album
 import com.example.vinyls.viewmodel.AlbumsViewModel
 import coil.compose.AsyncImage
@@ -56,6 +55,8 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
                 onValueChange = {},
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 placeholder = { Text("Search for records") },
+                enabled = false,
+                readOnly = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp, bottom = 12.dp)
