@@ -62,7 +62,6 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
                     .padding(top = 12.dp, bottom = 12.dp)
             )
 
-            // Filters row (simple placeholders)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 FilterChipPlaceholder(text = "Genre")
                 FilterChipPlaceholder(text = "Artist")

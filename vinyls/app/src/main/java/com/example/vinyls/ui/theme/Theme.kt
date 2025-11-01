@@ -5,7 +5,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// Use the custom colors for your dark theme
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryPurple,
     secondary = AccentColor,
@@ -24,7 +23,7 @@ fun VinylsTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colorScheme = DarkColorScheme, // Use our new dark scheme
+        colorScheme = DarkColorScheme,
         typography = Typography,
         content = content
     )

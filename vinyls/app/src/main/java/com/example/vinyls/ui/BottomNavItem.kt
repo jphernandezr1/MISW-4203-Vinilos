@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
-// This can also be in a separate file, e.g., ui/components/BottomNavigationBar.kt
 
 @Composable
 fun AppBottomNavigationBar(navController: NavHostController) {
@@ -26,9 +25,7 @@ fun AppBottomNavigationBar(navController: NavHostController) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStackEntry?.destination
 
-        // List of navigation items
         val navItems = listOf(
-            // Define your items with routes, icons, and labels
             BottomNavItem("catalog", Icons.Filled.MusicNote, "Catalog"),
             BottomNavItem("artists", Icons.Filled.People, "Artists"),
             BottomNavItem("collectors", Icons.Filled.Group, "Collectors"),
@@ -52,5 +49,4 @@ fun AppBottomNavigationBar(navController: NavHostController) {
     }
 }
 
-// A simple data class for navigation items
 data class BottomNavItem(val route: String, val icon: ImageVector, val label: String)

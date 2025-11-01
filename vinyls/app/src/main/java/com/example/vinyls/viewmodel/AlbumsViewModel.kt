@@ -24,7 +24,6 @@ class AlbumsViewModel : ViewModel() {
 
     fun fetchAlbums() {
         _isLoading.value = true
-        // Use Retrofit async call
         val call: Call<List<Album>> = RetrofitInstance.api.getAlbums()
         call.enqueue(object : Callback<List<Album>> {
             override fun onResponse(call: Call<List<Album>>, response: Response<List<Album>>) {
