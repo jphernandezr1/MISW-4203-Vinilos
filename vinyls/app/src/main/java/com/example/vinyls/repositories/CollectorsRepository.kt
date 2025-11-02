@@ -1,11 +1,12 @@
 package com.example.vinyls.repositories
 
 import android.app.Application
-import com.example.vinyls.models.Collector
+import com.example.vinyls.model.Collector
+import com.example.vinyls.network.NetworkServiceAdapter
 
 class CollectorsRepository(val application: Application) {
 
-    fun refreshData(): List<Collector>  {
-        return listOf()
+    suspend fun refreshData(): List<Collector>  {
+        return NetworkServiceAdapter.getInstance(application).getCollectors()
     }
 }

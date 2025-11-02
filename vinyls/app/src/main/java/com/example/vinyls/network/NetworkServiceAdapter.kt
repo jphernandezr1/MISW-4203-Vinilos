@@ -1,19 +1,17 @@
-package com.example.vinyls.networks
+package com.example.vinyls.network
 
 import android.content.Context
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.vinyls.models.Collector
-import org.json.JSONArray
-import org.json.JSONObject
+import com.example.vinyls.model.Collector
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-
+import org.json.JSONArray
+import org.json.JSONObject
 
 class NetworkServiceAdapter constructor(context: Context) {
     companion object{
@@ -42,7 +40,8 @@ class NetworkServiceAdapter constructor(context: Context) {
 
     suspend fun getCollectors() = suspendCoroutine<List<Collector>> { cont ->
         requestQueue.add(
-            getRequest("/collectors",
+            getRequest(
+                "/collectors",
                 { response ->
                     val resp = JSONArray(response)
                     val list = mutableListOf<Collector>()
@@ -61,6 +60,7 @@ class NetworkServiceAdapter constructor(context: Context) {
                     cont.resume(list)
                 },
                 {
+
                     cont.resumeWithException(it)
                 })
         )

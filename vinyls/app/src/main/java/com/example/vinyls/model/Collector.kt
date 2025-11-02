@@ -1,4 +1,4 @@
-package com.example.vinyls.models
+package com.example.vinyls.model
 
 data class Collector (
     val collectorId: Int,

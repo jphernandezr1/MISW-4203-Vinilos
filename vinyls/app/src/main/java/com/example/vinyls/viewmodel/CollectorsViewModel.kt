@@ -2,7 +2,7 @@ package com.example.vinyls.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.vinyls.models.Collector
+import com.example.vinyls.model.Collector
 import com.example.vinyls.repositories.CollectorsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,16 +16,6 @@ class CollectorsViewModel(application: Application) :  AndroidViewModel(applicat
     val collectors: LiveData<List<Collector>>
         get() = _collectors
 
-    private var _eventNetworkError = MutableLiveData(false)
-
-    val eventNetworkError: LiveData<Boolean>
-        get() = _eventNetworkError
-
-    private var _isNetworkErrorShown = MutableLiveData(false)
-
-    val isNetworkErrorShown: LiveData<Boolean>
-        get() = _isNetworkErrorShown
-
     init {
         refreshDataFromNetwork()
     }
@@ -36,14 +26,8 @@ class CollectorsViewModel(application: Application) :  AndroidViewModel(applicat
                 val data = collectorsRepository.refreshData()
                 _collectors.postValue(data)
             }
-            _eventNetworkError.postValue(false)
-            _isNetworkErrorShown.postValue(false)
         }
 
-    }
-
-    fun onNetworkErrorShown() {
-        _isNetworkErrorShown.value = true
     }
 
     class Factory(val app: Application) : ViewModelProvider.Factory {

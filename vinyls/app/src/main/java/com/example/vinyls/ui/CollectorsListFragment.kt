@@ -2,8 +2,6 @@ package com.example.vinyls.ui
 
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +16,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,89 +25,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.vinyls.model.Collector
+import com.example.vinyls.viewmodel.CollectorsViewModel
 
 
 class CollectorsListFragment {
-    private var _binding: CollectorFragmentBinding? = null
 }
-
-data class Collector(
-    val name: String,
-    val username: String,
-    val avatarColor: Color
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectorsListScreen() {
+fun CollectorsListScreen(viewModel: CollectorsViewModel = viewModel()) {
     var searchQuery by remember { mutableStateOf("") }
-    var selectedTab by remember { mutableStateOf(2) }
+    val collectorsState by viewModel.collectors.observeAsState()
 
-    val collectors = listOf(
-        Collector("Ethan Carter", "@music_lover_123", Color(0xFF6B8E7F)),
-        Collector("Sophia Bennett", "@vinyl_enthusiast", Color(0xFFD4A574)),
-        Collector("Liam Harper", "@record_collector", Color(0xFF7FA0B8)),
-        Collector("Olivia Hayes", "@melody_maker", Color(0xFFE8A87C)),
-        Collector("Noah Foster", "@sound_seeker", Color(0xFF8B9D9F)),
-        Collector("Ava Morgan", "@rhythm_rider", Color(0xFFE5C4A8))
-    )
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Collectors",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* Navigate back */ }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF0A0A14),
-                    titleContentColor = Color.White
-                )
-            )
-        },
-        containerColor = Color(0xFF0A0A14)
-    ) { padding ->
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(all = 16.dp)
         ) {
+            Text(text = "Collectors", style = MaterialTheme.typography.headlineSmall, color = Color.White)
             Spacer(modifier = Modifier.height(16.dp))
 
             // Search Bar
             OutlinedTextField(
                 value = searchQuery,
-                onValueChange = { searchQuery = it },
+                onValueChange = {},
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                placeholder = { Text("Search for records") },
+                enabled = true,
+                readOnly = false,
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp)),
-                placeholder = { Text("Search collectors", color = Color.Gray) },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray)
-                },
-//                colors = TextFieldDefaults.colors(
-//                    containerColor = Color(0xFF1E2A3A),
-//                    focusedBorderColor = Color.Transparent,
-//                    unfocusedBorderColor = Color.Transparent,
-//                    focusedTextColor = Color.White
-//                ),
-                singleLine = true
+                    .padding(top = 12.dp, bottom = 12.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -128,7 +79,7 @@ fun CollectorsListScreen() {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(collectors) { collector ->
+                items(items = collectorsState ?: emptyList()) { collector ->
                     CollectorItem(collector)
                 }
             }
@@ -178,8 +129,8 @@ fun CollectorItem(collector: Collector) {
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            collector.avatarColor,
-                            collector.avatarColor.copy(alpha = 0.7f)
+                            Color(0xFF6B8E7F),
+                            Color(0xFF6B8E7F).copy(alpha = 0.7f)
                         )
                     )
                 ),
@@ -204,7 +155,7 @@ fun CollectorItem(collector: Collector) {
                 color = Color.White
             )
             Text(
-                collector.username,
+                collector.email,
                 fontSize = 14.sp,
                 color = Color(0xFF9B9BAA)
             )
