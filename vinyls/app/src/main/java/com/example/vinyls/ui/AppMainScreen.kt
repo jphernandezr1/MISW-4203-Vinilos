@@ -10,6 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.vinyls.ui.AlbumsScreen
+import com.example.vinyls.ui.CollectorsListFragment
+import com.example.vinyls.ui.CollectorsListScreen
 
 
 @Composable
@@ -30,7 +32,7 @@ fun AppNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "catalog") {
         composable("catalog") { AlbumsScreen() }
         composable("artists") { /* anadir aca */ }
-        composable("collectors") { /* anadir aca */ }
+        composable("collectors") { CollectorsListScreen() }
         composable("profile") { /* anadir aca */ }
     }
 }
