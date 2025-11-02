@@ -53,7 +53,7 @@ fun CollectorsListScreen(viewModel: CollectorsViewModel = viewModel()) {
                 value = searchQuery,
                 onValueChange = {},
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                placeholder = { Text("Search for records") },
+                placeholder = { Text("Search for Collector") },
                 enabled = true,
                 readOnly = false,
                 singleLine = true,
