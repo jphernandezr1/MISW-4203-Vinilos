@@ -1,6 +1,7 @@
 package com.example.vinyls.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,7 +50,12 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
             .fillMaxSize()
             .padding(16.dp)) {
 
-            Text(text = "Catalog", style = MaterialTheme.typography.headlineSmall, color = Color.White)
+            Text(
+                text = "Catalog",
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                modifier = Modifier.testTag("catalog_title")
+            )
 
             OutlinedTextField(
                 value = "",
@@ -75,7 +82,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
                 contentPadding = PaddingValues(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().testTag("albums_grid")
             ) {
                 items(albumsState) { album ->
                     AlbumCard(album)
@@ -103,7 +110,12 @@ private fun FilterChipPlaceholder(text: String) {
 
 @Composable
 private fun AlbumCard(album: Album) {
-    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier) {
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .testTag("album_card_${'$'}{album.id}")
+            .clickable(enabled = true, onClick = { /* TODO: Navigate to detail in HU002 */ })
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
                 model = album.cover,
