@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -99,6 +100,7 @@ private fun AlbumDetailContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
+            .testTag("album_detail_screen")
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
@@ -145,17 +147,26 @@ private fun AlbumDetailContent(
                 text = album.description.orEmpty(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier
+                    .padding(bottom = 24.dp)
+                    .testTag("album_detail_description")
             )
 
-            Text(text = "Tracklist", style = MaterialTheme.typography.titleLarge, color = Color.White)
+            Text(
+                text = "Tracklist",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White,
+                modifier = Modifier.testTag("album_detail_tracklist_title")
+            )
             Spacer(modifier = Modifier.height(12.dp))
             TrackList(tracks = album.tracks)
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { /* TODO */ },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("album_detail_add_collection_button"),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB347FF))
             ) {
                 Text("Add to Collection", fontWeight = FontWeight.SemiBold)
@@ -164,7 +175,8 @@ private fun AlbumDetailContent(
             Button(
                 onClick = { /* TODO */ },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag("album_detail_add_wishlist_button"),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C1340))
             ) {
                 Text("Add to Wishlist", fontWeight = FontWeight.SemiBold)

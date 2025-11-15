@@ -36,7 +36,10 @@ class CollectorsListFragment {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectorsListScreen(viewModel: CollectorsViewModel = viewModel(), navController: NavHostController) {
+fun CollectorsListScreen(
+    viewModel: CollectorsViewModel = viewModel(),
+    navController: NavHostController? = null
+) {
     var searchQuery by remember { mutableStateOf("") }
     val collectorsState by viewModel.collectors.observeAsState()
 
@@ -115,11 +118,11 @@ fun FilterChip(text: String, backgroundColor: Color) {
 }
 
 @Composable
-fun CollectorItem(collector: Collector, navController: NavHostController) {
+fun CollectorItem(collector: Collector, navController: NavHostController?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate("collector_detail/${collector.id}") },
+            .clickable { navController?.navigate("collector_detail/${collector.id}") },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Avatar
