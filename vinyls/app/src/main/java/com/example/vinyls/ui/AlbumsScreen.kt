@@ -36,13 +36,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.vinyls.model.Album
 import com.example.vinyls.viewmodel.AlbumsViewModel
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
+fun AlbumsScreen(
+    navController: NavController,
+    viewModel: AlbumsViewModel = viewModel()
+) {
     val albumsState by viewModel.albums.collectAsState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -85,7 +89,9 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
                 modifier = Modifier.fillMaxSize().testTag("albums_grid")
             ) {
                 items(albumsState) { album ->
-                    AlbumCard(album)
+                    AlbumCard(album) {
+                        navController.navigate("album_detail/${album.id}")
+                    }
                 }
             }
         }
@@ -109,12 +115,12 @@ private fun FilterChipPlaceholder(text: String) {
 }
 
 @Composable
-private fun AlbumCard(album: Album) {
+private fun AlbumCard(album: Album, onClick: () -> Unit) {
     Card(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
-            .testTag("album_card_${'$'}{album.id}")
-            .clickable(enabled = true, onClick = { /* TODO: Navigate to detail in HU002 */ })
+            .testTag("album_card_${album.id}")
+            .clickable(enabled = true, onClick = onClick)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
