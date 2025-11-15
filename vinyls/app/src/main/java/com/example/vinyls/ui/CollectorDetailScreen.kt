@@ -31,12 +31,6 @@ import com.example.vinyls.model.CollectorAlbum
 import com.example.vinyls.model.CollectorPerformer
 import com.example.vinyls.viewmodel.CollectorViewModel
 
-
-// Data classes
-
-class CollectorDetailScreen {
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectorDetailFragment(
