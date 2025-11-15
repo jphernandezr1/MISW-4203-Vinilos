@@ -40,7 +40,7 @@ class CollectorDetailScreen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectorDetailFragment(
-    navController: NavHostController,
+    navController: NavHostController? = null,
     collectorId: Int?
 ) {
     // 1. Obtén el contexto de la Aplicación
@@ -66,7 +66,7 @@ fun CollectorDetailFragment(
             TopAppBar(
                 title = {
                     Text(
-                        "Collector",
+                        "Collector Detail Screen",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         fontSize = 20.sp,
@@ -74,7 +74,7 @@ fun CollectorDetailFragment(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {  navController.popBackStack() }) {
+                    IconButton(onClick = {  navController?.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
@@ -214,7 +214,7 @@ fun CollectorDetailFragment(
             item {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
-                    "Activity",
+                    "Collector Albums",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
