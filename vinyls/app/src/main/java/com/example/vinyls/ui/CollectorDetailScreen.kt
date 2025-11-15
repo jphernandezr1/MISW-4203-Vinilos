@@ -286,32 +286,20 @@ fun CollectionCard(performer: CollectorPerformer) {
     Column(
         modifier = Modifier.width(180.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(180.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color(0xFFE8D5C4)),
-            contentAlignment = Alignment.Center
+        Card (
+            shape = RoundedCornerShape(12.dp),
         ) {
-
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.8f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AsyncImage(
-                        model = performer.image,
-                        contentDescription = performer.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(160.dp)
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                    )
-                }
+            AsyncImage(
+                model = performer.image,
+                contentDescription = performer.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(160.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+            )
         }
+
 
         Text(
             performer.name,
