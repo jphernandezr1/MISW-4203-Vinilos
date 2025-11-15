@@ -119,7 +119,7 @@ fun CollectorItem(collector: Collector, navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate("collector_detail/123") },
+            .clickable { navController.navigate("collector_detail/${collector.id}") },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Avatar

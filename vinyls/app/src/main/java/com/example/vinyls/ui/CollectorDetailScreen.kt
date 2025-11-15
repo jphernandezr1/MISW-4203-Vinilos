@@ -1,5 +1,6 @@
 package com.example.vinyls.ui
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,29 +12,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import com.example.vinyls.model.CollectorAlbum
+import com.example.vinyls.model.CollectorPerformer
+import com.example.vinyls.viewmodel.CollectorViewModel
 
 
 // Data classes
-data class CollectionItem(
-    val title: String,
-    val backgroundColor: Color,
-    val hasVinyl: Boolean = false
-)
-
-data class ActivityItem(
-    val title: String,
-    val subtitle: String,
-    val backgroundColor: Color
-)
 
 class CollectorDetailScreen {
 }
@@ -42,25 +41,25 @@ class CollectorDetailScreen {
 @Composable
 fun CollectorDetailFragment(
     navController: NavHostController,
+    collectorId: Int?
+) {
+    // 1. Obtén el contexto de la Aplicación
+    val application = LocalContext.current.applicationContext as Application
 
-    ) {
+    // 2. Crea una instancia de tu Factory, pasando la app y el ID
+    val factory = CollectorViewModel.Factory(application, collectorId!!)
+
+    // 3. Pasa la factory al composable viewModel()
+    val viewModel: CollectorViewModel = viewModel(factory = factory)
+
+    val collectorState by viewModel.collector.observeAsState()
+
     val backgroundColor = Color(0xFF1A1625)
     val cardColor = Color(0xFF2A2336)
     val purpleAccent = Color(0xFF7B3FF2)
 
     val musicalTastes = listOf("Indie Rock", "Electronic", "Hip Hop", "Jazz", "Classical")
 
-    val collections = listOf(
-        CollectionItem("The Indie Sound", Color(0xFFE8D5C4), false),
-        CollectionItem("Electronic Beats", Color(0xFFF5F5F5), true),
-        CollectionItem("Hip Hop Classics", Color(0xFF2D2D2D), false)
-    )
-
-    val activities = listOf(
-        ActivityItem("The Indie Sound", "Added to collection", Color(0xFFE8D5C4)),
-        ActivityItem("Electronic Beats", "Added to collection", Color(0xFF2D2D2D)),
-        ActivityItem("Hip Hop Classics", "Added to collection", Color(0xFFF5F5F5))
-    )
 
     Scaffold(
         topBar = {
@@ -126,7 +125,7 @@ fun CollectorDetailFragment(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        "Ethan Carter",
+                        collectorState?.name ?: "Unknown",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -140,7 +139,7 @@ fun CollectorDetailFragment(
                     )
 
                     Text(
-                        "Joined 2021",
+                        collectorState?.email ?: "Loading email",
                         fontSize = 14.sp,
                         color = Color.Gray,
                         modifier = Modifier.padding(top = 4.dp)
@@ -156,9 +155,9 @@ fun CollectorDetailFragment(
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    StatCard("120", "Records", modifier = Modifier.weight(1f), cardColor)
-                    StatCard("80", "Followers", modifier = Modifier.weight(1f), cardColor)
-                    StatCard("20", "Following", modifier = Modifier.weight(1f), cardColor)
+                    StatCard("${collectorState?.comments?.size}", "Comments", modifier = Modifier.weight(1f), cardColor)
+                    StatCard("${collectorState?.favoritePerformers?.size}", "Performers", modifier = Modifier.weight(1f), cardColor)
+                    StatCard("${collectorState?.collectorAlbums?.size}", "Albums", modifier = Modifier.weight(1f), cardColor)
                 }
             }
 
@@ -191,7 +190,7 @@ fun CollectorDetailFragment(
             item {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
-                    "Collection Highlights",
+                    "Favorite Performers",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -205,8 +204,8 @@ fun CollectorDetailFragment(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(collections) { collection ->
-                        CollectionCard(collection)
+                    items(collectorState?.favoritePerformers ?: mutableListOf()) { performer ->
+                        CollectionCard(performer)
                     }
                 }
             }
@@ -225,8 +224,8 @@ fun CollectorDetailFragment(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            items(activities) { activity ->
-                ActivityItem(activity)
+            items(collectorState?.collectorAlbums ?: mutableListOf()) { album ->
+                ActivityItem(album)
             }
 
             item {
@@ -283,7 +282,7 @@ fun GenreChip(genre: String, backgroundColor: Color) {
 }
 
 @Composable
-fun CollectionCard(collection: CollectionItem) {
+fun CollectionCard(performer: CollectorPerformer) {
     Column(
         modifier = Modifier.width(180.dp)
     ) {
@@ -291,35 +290,10 @@ fun CollectionCard(collection: CollectionItem) {
             modifier = Modifier
                 .size(180.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(collection.backgroundColor),
+                .background(Color(0xFFE8D5C4)),
             contentAlignment = Alignment.Center
         ) {
-            if (collection.hasVinyl) {
-                // Vinyl record representation
-                Box(
-                    modifier = Modifier
-                        .size(140.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .align(Alignment.Center)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(16.dp)
-                                .align(Alignment.Center)
-                                .clip(CircleShape)
-                                .background(Color.Black)
-                        )
-                    }
-                }
-            } else {
-                // Simple icon
+
                 Box(
                     modifier = Modifier
                         .size(40.dp)
@@ -327,18 +301,20 @@ fun CollectionCard(collection: CollectionItem) {
                         .background(Color.Black.copy(alpha = 0.8f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Box(
+                    AsyncImage(
+                        model = performer.image,
+                        contentDescription = performer.name,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(16.dp)
-                            .clip(CircleShape)
-                            .background(Color.White)
+                            .height(160.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
                     )
                 }
-            }
         }
 
         Text(
-            collection.title,
+            performer.name,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Color.White,
@@ -348,7 +324,7 @@ fun CollectionCard(collection: CollectionItem) {
 }
 
 @Composable
-fun ActivityItem(activity: ActivityItem) {
+fun ActivityItem(album: CollectorAlbum) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -359,7 +335,7 @@ fun ActivityItem(activity: ActivityItem) {
             modifier = Modifier
                 .size(56.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(activity.backgroundColor),
+                .background(Color(0xFFE8D5C4)),
             contentAlignment = Alignment.Center
         ) {
             Box(
@@ -382,13 +358,13 @@ fun ActivityItem(activity: ActivityItem) {
 
         Column {
             Text(
-                activity.title,
+                "Album: ${album.id}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.White
             )
             Text(
-                activity.subtitle,
+                "\$ ${album.price}",
                 fontSize = 14.sp,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 2.dp)

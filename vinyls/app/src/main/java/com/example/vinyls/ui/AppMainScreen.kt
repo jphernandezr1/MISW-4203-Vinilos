@@ -9,11 +9,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.vinyls.ui.AlbumsScreen
 import com.example.vinyls.ui.CollectorDetailFragment
-import com.example.vinyls.ui.CollectorsListFragment
 import com.example.vinyls.ui.CollectorsListScreen
 import com.example.vinyls.ui.Screen
 
@@ -49,18 +47,18 @@ fun AppNavHost(navController: NavHostController) {
 
         // Collector Detail Screen with parameter
         composable(
-            route = Screen.CollectorDetail.route,
+            route = "collector_detail/{collectorId}",
             arguments = listOf(
                 navArgument("collectorId") {
-                    type = NavType.StringType
+                    type = NavType.IntType
                     nullable = false
                 }
             )
         ) { backStackEntry ->
-            val collectorId = backStackEntry.arguments?.getString("collectorId")
+            val collectorId = backStackEntry.arguments?.getInt("collectorId")
             CollectorDetailFragment(
                 navController = navController,
-//                collectorId = collectorId
+                collectorId = collectorId
             )
         }
     }
