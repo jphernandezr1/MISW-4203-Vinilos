@@ -5,16 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="MainActivity">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="CollectorsListViewTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.vinyls'">
+      <SelectionState runConfigName="collectorDetailScreen_displaysCorrectTitle()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AlbumDetailScreenTest">
+      <SelectionState runConfigName="CollectorScreenTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="collectorDetailScreen_displaysMusicalTasteTags()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="collectorDetailScreen_scrollsToActivitySection()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
