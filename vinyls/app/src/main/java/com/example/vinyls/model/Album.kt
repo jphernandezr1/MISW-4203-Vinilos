@@ -28,8 +28,3 @@ data class Performer(
     val creationDate: String? = null
 )
 
-data class Comment(
-    val id: Int,
-    val description: String?,
-    val rating: Int? = null
-)

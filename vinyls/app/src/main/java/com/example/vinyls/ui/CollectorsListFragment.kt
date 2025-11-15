@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.vinyls.model.Collector
 import com.example.vinyls.viewmodel.CollectorsViewModel
 
@@ -35,7 +36,7 @@ class CollectorsListFragment {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectorsListScreen(viewModel: CollectorsViewModel = viewModel()) {
+fun CollectorsListScreen(viewModel: CollectorsViewModel = viewModel(), navController: NavHostController) {
     var searchQuery by remember { mutableStateOf("") }
     val collectorsState by viewModel.collectors.observeAsState()
 
@@ -53,7 +54,7 @@ fun CollectorsListScreen(viewModel: CollectorsViewModel = viewModel()) {
                 value = searchQuery,
                 onValueChange = {},
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                placeholder = { Text("Search for Collector") },
+                    placeholder = { Text("Search for Collector") },
                 enabled = true,
                 readOnly = false,
                 singleLine = true,
@@ -80,7 +81,7 @@ fun CollectorsListScreen(viewModel: CollectorsViewModel = viewModel()) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = collectorsState ?: emptyList()) { collector ->
-                    CollectorItem(collector)
+                    CollectorItem(collector, navController = navController)
                 }
             }
         }
@@ -114,11 +115,11 @@ fun FilterChip(text: String, backgroundColor: Color) {
 }
 
 @Composable
-fun CollectorItem(collector: Collector) {
+fun CollectorItem(collector: Collector, navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Handle click */ },
+            .clickable { navController.navigate("collector_detail/${collector.id}") },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Avatar
@@ -134,7 +135,7 @@ fun CollectorItem(collector: Collector) {
                         )
                     )
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 Icons.Default.Person,

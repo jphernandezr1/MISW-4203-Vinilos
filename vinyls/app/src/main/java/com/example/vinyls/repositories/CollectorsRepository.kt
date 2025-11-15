@@ -9,4 +9,8 @@ class CollectorsRepository(val application: Application) {
     suspend fun refreshData(): List<Collector>  {
         return NetworkServiceAdapter.getInstance(application).getCollectors()
     }
+
+    suspend fun refreshCollectorData(collectorId: Int): Collector {
+        return NetworkServiceAdapter.getInstance(application).getCollectorById(collectorId)
+    }
 }
