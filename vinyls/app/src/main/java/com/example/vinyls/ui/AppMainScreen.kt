@@ -10,10 +10,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.vinyls.ui.AlbumDetailScreen
 import com.example.vinyls.ui.AlbumsScreen
 import com.example.vinyls.ui.CollectorDetailFragment
 import com.example.vinyls.ui.CollectorsListScreen
-import com.example.vinyls.ui.Screen
 
 
 @Composable
@@ -36,8 +36,22 @@ fun AppNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "catalog") {
         // Home Screen
         composable("catalog") {
-            AppMainScreen(navController = navController) {  AlbumsScreen() }
+            AppMainScreen(navController = navController) {  AlbumsScreen(navController = navController) }
         }
+                composable(
+                    route = "album_detail/{albumId}",
+                    arguments = listOf(
+                        navArgument("albumId") {
+                            type = NavType.IntType
+                            nullable = false
+                        }
+                    )
+                ) { backStackEntry ->
+                    val albumId = backStackEntry.arguments?.getInt("albumId") ?: return@composable
+                    AppMainScreen(navController = navController) {
+                        AlbumDetailScreen(navController = navController, albumId = albumId)
+                    }
+                }
         composable("artists") { /* anadir aca */ }
         composable("collectors") {
             AppMainScreen(navController = navController) {CollectorsListScreen(navController = navController) }
