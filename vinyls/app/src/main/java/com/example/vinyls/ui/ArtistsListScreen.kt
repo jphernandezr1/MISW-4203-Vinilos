@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.vinyls.model.Artist
 import com.example.vinyls.model.Collector
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,7 +100,7 @@ fun ArtistListScreen() {
 }
 
 @Composable
-fun ArtistItem(collector: Collector, navController: NavHostController?) {
+fun ArtistItem(artist: Artist, navController: NavHostController?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,16 +135,18 @@ fun ArtistItem(collector: Collector, navController: NavHostController?) {
         // Collector Info
         Column {
             Text(
-                collector.name,
+                artist.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
-            Text(
-                collector.email,
-                fontSize = 14.sp,
-                color = Color(0xFF9B9BAA)
-            )
+            artist.description?.let {
+                Text(
+                    it,
+                    fontSize = 14.sp,
+                    color = Color(0xFF9B9BAA)
+                )
+            }
         }
     }
 }
