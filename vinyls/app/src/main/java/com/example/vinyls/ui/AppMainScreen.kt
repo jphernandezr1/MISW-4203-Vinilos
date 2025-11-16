@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.vinyls.ui.AlbumDetailScreen
 import com.example.vinyls.ui.AlbumsScreen
+import com.example.vinyls.ui.ArtistListScreen
 import com.example.vinyls.ui.CollectorDetailFragment
 import com.example.vinyls.ui.CollectorsListScreen
 
@@ -50,7 +51,9 @@ fun AppNavHost(navController: NavHostController) {
                 val albumId = backStackEntry.arguments?.getInt("albumId") ?: return@composable
                 AlbumDetailScreen(navController = navController, albumId = albumId)
             }
-            composable("artists") { /* anadir aca */ }
+            composable("artists") {
+                ArtistListScreen(navController = navController)
+            }
             composable("collectors") {
                 CollectorsListScreen(navController = navController)
             }
