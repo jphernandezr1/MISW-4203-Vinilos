@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -27,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,14 +40,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.vinyls.model.Artist
-import com.example.vinyls.model.Collector
+import com.example.vinyls.viewmodel.ArtistsListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ArtistListScreen() {
+fun ArtistListScreen(
+    viewModel: ArtistsListViewModel = viewModel(),
+    navController: NavHostController? = null
+) {
     var searchQuery by rememberSaveable { mutableStateOf("") }
+    val artistsAsState by viewModel.artists.observeAsState(initial = emptyList())
+    val listState = rememberLazyListState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -89,10 +97,10 @@ fun ArtistListScreen() {
                 state = listState
             ) {
                 items(
-                    items = collectorsState,
+                    items = artistsAsState,
                     key = { it.id }
-                ) { collector ->
-                    ArtistItem(collector, navController = navController)
+                ) { artist ->
+                    ArtistItem(artist, navController = navController)
                 }
             }
         }
@@ -103,8 +111,8 @@ fun ArtistListScreen() {
 fun ArtistItem(artist: Artist, navController: NavHostController?) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navController?.navigate("collector_detail/${collector.id}") },
+            .fillMaxWidth(),
+//            .clickable { navController?.navigate("collector_detail/${collector.id}") },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Avatar
