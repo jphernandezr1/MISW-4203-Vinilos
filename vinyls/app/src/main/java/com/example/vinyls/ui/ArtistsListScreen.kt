@@ -1,7 +1,6 @@
 package com.example.vinyls.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,11 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.vinyls.model.Artist
 import com.example.vinyls.viewmodel.ArtistsListViewModel
 
@@ -69,7 +70,7 @@ fun ArtistListScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                placeholder = { Text("Search for Collector") },
+                placeholder = { Text("Search for Artist") },
                 enabled = true,
                 readOnly = false,
                 singleLine = true,
@@ -130,7 +131,17 @@ fun ArtistItem(artist: Artist, navController: NavHostController?) {
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
+            artist.image?.let {
+                AsyncImage(
+                    model = it,
+                    contentDescription = "Artist $it",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                )
+            }
+            ?: Icon(
                 Icons.Default.Person,
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.5f),
@@ -148,9 +159,9 @@ fun ArtistItem(artist: Artist, navController: NavHostController?) {
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
-            artist.description?.let {
+            artist.albums?.let {
                 Text(
-                    it,
+                    "${it.size} albums",
                     fontSize = 14.sp,
                     color = Color(0xFF9B9BAA)
                 )
