@@ -11,7 +11,7 @@ class CollectorsRepository(val application: Application) {
     suspend fun refreshData(): List<Collector>  {
         var potentialResp = CacheManager.getInstance(application.applicationContext).getCollectors()
         if(potentialResp.isEmpty()){
-            Log.d("Cache decision collectors", "get from network")
+            Log.d("Cache decision", "get collectors from network")
             var collectors = NetworkServiceAdapter.getInstance(application).getCollectors()
             CacheManager.getInstance(application.applicationContext).addCollectors(collectors)
             return collectors
