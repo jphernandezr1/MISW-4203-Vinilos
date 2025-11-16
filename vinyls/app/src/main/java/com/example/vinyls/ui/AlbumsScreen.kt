@@ -1,6 +1,7 @@
 package com.example.vinyls.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -23,32 +25,44 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.vinyls.model.Album
 import com.example.vinyls.viewmodel.AlbumsViewModel
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
-    val albumsState by viewModel.albums.collectAsState()
+fun AlbumsScreen(
+    navController: NavController,
+    viewModel: AlbumsViewModel = viewModel()
+) {
+    val albumsState by viewModel.albums.collectAsStateWithLifecycle()
+    val gridState = rememberLazyGridState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)) {
 
-            Text(text = "Catalog", style = MaterialTheme.typography.headlineSmall, color = Color.White)
+            Text(
+                text = "Catalog",
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                modifier = Modifier.testTag("catalog_title")
+            )
 
             OutlinedTextField(
                 value = "",
@@ -75,10 +89,19 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
                 contentPadding = PaddingValues(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
+                state = gridState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("albums_grid")
             ) {
-                items(albumsState) { album ->
-                    AlbumCard(album)
+                items(
+                    items = albumsState,
+                    key = { it.id },
+                    contentType = { "album_card" }
+                ) { album ->
+                    AlbumCard(album) {
+                        navController.navigate("album_detail/${album.id}")
+                    }
                 }
             }
         }
@@ -102,8 +125,16 @@ private fun FilterChipPlaceholder(text: String) {
 }
 
 @Composable
-private fun AlbumCard(album: Album) {
-    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier) {
+private fun AlbumCard(album: Album, onClick: () -> Unit) {
+    val performerNames = remember(album.id, album.performers) {
+        album.performers.joinToString { it.name }
+    }
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .testTag("album_card_${album.id}")
+            .clickable(enabled = true, onClick = onClick)
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
                 model = album.cover,
@@ -116,7 +147,9 @@ private fun AlbumCard(album: Album) {
             )
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 Text(text = album.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Color.White)
-                Text(text = album.performers.joinToString { it.name }, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                if (performerNames.isNotBlank()) {
+                    Text(text = performerNames, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                }
             }
         }
     }

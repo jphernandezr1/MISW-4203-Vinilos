@@ -1,8 +1,6 @@
 package com.example.vinyls.ui
 
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,22 +36,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.vinyls.model.Collector
-import com.example.vinyls.viewmodel.CollectorsViewModel
+import coil.compose.AsyncImage
+import com.example.vinyls.model.Artist
+import com.example.vinyls.viewmodel.ArtistsListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectorsListScreen(
-    viewModel: CollectorsViewModel = viewModel(),
+fun ArtistListScreen(
+    viewModel: ArtistsListViewModel = viewModel(),
     navController: NavHostController? = null
 ) {
     var searchQuery by rememberSaveable { mutableStateOf("") }
-    val collectorsState by viewModel.collectors.observeAsState(initial = emptyList())
+    val artistsAsState by viewModel.artists.observeAsState(initial = emptyList())
     val listState = rememberLazyListState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -64,7 +62,7 @@ fun CollectorsListScreen(
                 .fillMaxSize()
                 .padding(all = 16.dp)
         ) {
-            Text(text = "Collectors", style = MaterialTheme.typography.headlineSmall, color = Color.White)
+            Text(text = "Artists", style = MaterialTheme.typography.headlineSmall, color = Color.White)
             Spacer(modifier = Modifier.height(16.dp))
 
             // Search Bar
@@ -72,7 +70,7 @@ fun CollectorsListScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    placeholder = { Text("Search for Collector") },
+                placeholder = { Text("Search for Artist") },
                 enabled = true,
                 readOnly = false,
                 singleLine = true,
@@ -100,10 +98,10 @@ fun CollectorsListScreen(
                 state = listState
             ) {
                 items(
-                    items = collectorsState,
+                    items = artistsAsState,
                     key = { it.id }
-                ) { collector ->
-                    CollectorItem(collector, navController = navController)
+                ) { artist ->
+                    ArtistItem(artist, navController = navController)
                 }
             }
         }
@@ -111,37 +109,11 @@ fun CollectorsListScreen(
 }
 
 @Composable
-fun FilterChip(text: String, backgroundColor: Color) {
-    Surface(
-        modifier = Modifier.clip(RoundedCornerShape(20.dp)),
-        color = backgroundColor
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = text,
-                color = Color.White,
-                fontSize = 14.sp
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(18.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun CollectorItem(collector: Collector, navController: NavHostController?) {
+fun ArtistItem(artist: Artist, navController: NavHostController?) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navController?.navigate("collector_detail/${collector.id}") },
+            .fillMaxWidth(),
+//            .clickable { navController?.navigate("collector_detail/${collector.id}") },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Avatar
@@ -159,7 +131,17 @@ fun CollectorItem(collector: Collector, navController: NavHostController?) {
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
+            artist.image?.let {
+                AsyncImage(
+                    model = it,
+                    contentDescription = "Artist $it",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                )
+            }
+            ?: Icon(
                 Icons.Default.Person,
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.5f),
@@ -172,16 +154,18 @@ fun CollectorItem(collector: Collector, navController: NavHostController?) {
         // Collector Info
         Column {
             Text(
-                collector.name,
+                artist.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
-            Text(
-                collector.email,
-                fontSize = 14.sp,
-                color = Color(0xFF9B9BAA)
-            )
+            artist.albums?.let {
+                Text(
+                    "${it.size} albums",
+                    fontSize = 14.sp,
+                    color = Color(0xFF9B9BAA)
+                )
+            }
         }
     }
 }
