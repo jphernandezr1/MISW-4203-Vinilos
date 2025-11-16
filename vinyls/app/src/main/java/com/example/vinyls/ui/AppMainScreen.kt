@@ -33,48 +33,44 @@ fun AppMainScreen(
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "catalog") {
-        // Home Screen
-        composable("catalog") {
-            AppMainScreen(navController = navController) {  AlbumsScreen(navController = navController) }
-        }
-                composable(
-                    route = "album_detail/{albumId}",
-                    arguments = listOf(
-                        navArgument("albumId") {
-                            type = NavType.IntType
-                            nullable = false
-                        }
-                    )
-                ) { backStackEntry ->
-                    val albumId = backStackEntry.arguments?.getInt("albumId") ?: return@composable
-                    AppMainScreen(navController = navController) {
-                        AlbumDetailScreen(navController = navController, albumId = albumId)
+    AppMainScreen(navController = navController) {
+        NavHost(navController = navController, startDestination = "catalog") {
+            composable("catalog") {
+                AlbumsScreen(navController = navController)
+            }
+            composable(
+                route = "album_detail/{albumId}",
+                arguments = listOf(
+                    navArgument("albumId") {
+                        type = NavType.IntType
+                        nullable = false
                     }
-                }
-        composable("artists") { /* anadir aca */ }
-        composable("collectors") {
-            AppMainScreen(navController = navController) {CollectorsListScreen(navController = navController) }
-        }
-        composable("profile") { /* anadir aca */ }
+                )
+            ) { backStackEntry ->
+                val albumId = backStackEntry.arguments?.getInt("albumId") ?: return@composable
+                AlbumDetailScreen(navController = navController, albumId = albumId)
+            }
+            composable("artists") { /* anadir aca */ }
+            composable("collectors") {
+                CollectorsListScreen(navController = navController)
+            }
+            composable("profile") { /* anadir aca */ }
 
-
-        // Collector Detail Screen with parameter
-        composable(
-            route = "collector_detail/{collectorId}",
-            arguments = listOf(
-                navArgument("collectorId") {
-                    type = NavType.IntType
-                    nullable = false
-                }
-            )
-        ) { backStackEntry ->
-            val collectorId = backStackEntry.arguments?.getInt("collectorId")
-            CollectorDetailFragment(
-                navController = navController,
-                collectorId = collectorId
-            )
+            composable(
+                route = "collector_detail/{collectorId}",
+                arguments = listOf(
+                    navArgument("collectorId") {
+                        type = NavType.IntType
+                        nullable = false
+                    }
+                )
+            ) { backStackEntry ->
+                val collectorId = backStackEntry.arguments?.getInt("collectorId")
+                CollectorDetailFragment(
+                    navController = navController,
+                    collectorId = collectorId
+                )
+            }
         }
     }
-
 }

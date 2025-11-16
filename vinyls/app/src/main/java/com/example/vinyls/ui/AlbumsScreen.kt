@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -24,8 +25,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.vinyls.model.Album
@@ -47,7 +49,8 @@ fun AlbumsScreen(
     navController: NavController,
     viewModel: AlbumsViewModel = viewModel()
 ) {
-    val albumsState by viewModel.albums.collectAsState()
+    val albumsState by viewModel.albums.collectAsStateWithLifecycle()
+    val gridState = rememberLazyGridState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier
@@ -86,9 +89,16 @@ fun AlbumsScreen(
                 contentPadding = PaddingValues(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize().testTag("albums_grid")
+                state = gridState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("albums_grid")
             ) {
-                items(albumsState) { album ->
+                items(
+                    items = albumsState,
+                    key = { it.id },
+                    contentType = { "album_card" }
+                ) { album ->
                     AlbumCard(album) {
                         navController.navigate("album_detail/${album.id}")
                     }
@@ -116,6 +126,9 @@ private fun FilterChipPlaceholder(text: String) {
 
 @Composable
 private fun AlbumCard(album: Album, onClick: () -> Unit) {
+    val performerNames = remember(album.id, album.performers) {
+        album.performers.joinToString { it.name }
+    }
     Card(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
@@ -134,7 +147,9 @@ private fun AlbumCard(album: Album, onClick: () -> Unit) {
             )
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 Text(text = album.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Color.White)
-                Text(text = album.performers.joinToString { it.name }, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                if (performerNames.isNotBlank()) {
+                    Text(text = performerNames, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                }
             }
         }
     }

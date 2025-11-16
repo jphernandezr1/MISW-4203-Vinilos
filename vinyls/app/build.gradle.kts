@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
     implementation("androidx.appcompat:appcompat:1.7.1")
     // Compose Material Icons (for Icons.Filled.*)
     implementation("androidx.compose.material:material-icons-extended")

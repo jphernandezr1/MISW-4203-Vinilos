@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -25,8 +25,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -48,7 +49,7 @@ fun AlbumDetailScreen(
     albumId: Int,
     viewModel: AlbumDetailViewModel = viewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(albumId) {
         viewModel.loadAlbum(albumId)
@@ -95,6 +96,22 @@ private fun AlbumDetailContent(
 ) {
     val album = uiState.album ?: return
     val scrollState = rememberScrollState()
+    val heroOverlay = remember {
+        Brush.verticalGradient(colors = listOf(Color.Transparent, Color(0xCC0B0614)))
+    }
+    val performerNames = remember(album.performers) {
+        album.performers.joinToString { it.name }
+    }
+    val metaLine = remember(performerNames, album.releaseDate, album.genre) {
+        buildMetaLine(
+            performers = performerNames,
+            releaseDate = album.releaseDate,
+            genre = album.genre
+        )
+    }
+    val description = remember(album.id, album.description) {
+        album.description.orEmpty()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -113,14 +130,10 @@ private fun AlbumDetailContent(
             Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color(0xCC0B0614))
-                        )
-                    )
+                    .background(heroOverlay)
             )
             IconButton(onClick = onBack, modifier = Modifier.padding(16.dp)) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             Column(
                 modifier = Modifier
@@ -130,11 +143,7 @@ private fun AlbumDetailContent(
                 Text(text = album.name, style = MaterialTheme.typography.headlineMedium, color = Color.White)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = buildMetaLine(
-                        performers = album.performers.joinToString { it.name },
-                        releaseDate = album.releaseDate,
-                        genre = album.genre
-                    ),
+                    text = metaLine,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFFBB86FC)
                 )
@@ -143,7 +152,7 @@ private fun AlbumDetailContent(
 
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)) {
             Text(
-                text = album.description.orEmpty(),
+                text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White,
                 modifier = Modifier
@@ -194,12 +203,15 @@ private fun buildMetaLine(performers: String, releaseDate: String?, genre: Strin
 
 @Composable
 private fun TrackList(tracks: List<Track>) {
-    if (tracks.isEmpty()) {
+    val indexedTracks = remember(tracks) {
+        tracks.mapIndexed { index, track -> index + 1 to track }
+    }
+    if (indexedTracks.isEmpty()) {
         Text(text = "Tracklist not available", color = Color(0xFFB7A1D8))
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            tracks.forEachIndexed { index, track ->
-                TrackRow(number = index + 1, track = track)
+            indexedTracks.forEach { (number, track) ->
+                TrackRow(number = number, track = track)
             }
         }
     }

@@ -1,12 +1,10 @@
 package com.example.vinyls.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.vinyls.model.Album
 import com.example.vinyls.network.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,31 +28,27 @@ class AlbumDetailViewModel : ViewModel() {
 
         RetrofitInstance.api.getAlbum(albumId).enqueue(object : Callback<Album> {
             override fun onResponse(call: Call<Album>, response: Response<Album>) {
-                viewModelScope.launch {
-                    if (response.isSuccessful) {
-                        _uiState.value = AlbumDetailUiState(
-                            isLoading = false,
-                            album = response.body(),
-                            errorMessage = null
-                        )
-                    } else {
-                        _uiState.value = AlbumDetailUiState(
-                            isLoading = false,
-                            album = null,
-                            errorMessage = "Unable to load album"
-                        )
-                    }
+                _uiState.value = if (response.isSuccessful) {
+                    AlbumDetailUiState(
+                        isLoading = false,
+                        album = response.body(),
+                        errorMessage = null
+                    )
+                } else {
+                    AlbumDetailUiState(
+                        isLoading = false,
+                        album = null,
+                        errorMessage = "Unable to load album"
+                    )
                 }
             }
 
             override fun onFailure(call: Call<Album>, t: Throwable) {
-                viewModelScope.launch {
-                    _uiState.value = AlbumDetailUiState(
-                        isLoading = false,
-                        album = null,
-                        errorMessage = t.localizedMessage ?: "Network error"
-                    )
-                }
+                _uiState.value = AlbumDetailUiState(
+                    isLoading = false,
+                    album = null,
+                    errorMessage = t.localizedMessage ?: "Network error"
+                )
             }
         })
     }

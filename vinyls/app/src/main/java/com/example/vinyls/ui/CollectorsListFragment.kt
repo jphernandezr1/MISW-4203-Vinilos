@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,7 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,8 +54,9 @@ fun CollectorsListScreen(
     viewModel: CollectorsViewModel = viewModel(),
     navController: NavHostController? = null
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    val collectorsState by viewModel.collectors.observeAsState()
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    val collectorsState by viewModel.collectors.observeAsState(initial = emptyList())
+    val listState = rememberLazyListState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -68,7 +70,7 @@ fun CollectorsListScreen(
             // Search Bar
             OutlinedTextField(
                 value = searchQuery,
-                onValueChange = {},
+                onValueChange = { searchQuery = it },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     placeholder = { Text("Search for Collector") },
                 enabled = true,
@@ -94,9 +96,13 @@ fun CollectorsListScreen(
 
             // Collectors List
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                state = listState
             ) {
-                items(items = collectorsState ?: emptyList()) { collector ->
+                items(
+                    items = collectorsState,
+                    key = { it.id }
+                ) { collector ->
                     CollectorItem(collector, navController = navController)
                 }
             }
