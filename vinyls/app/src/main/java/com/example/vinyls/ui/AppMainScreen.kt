@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.vinyls.ui.AlbumDetailScreen
 import com.example.vinyls.ui.AlbumsScreen
+import com.example.vinyls.ui.ArtistDetailScreen
 import com.example.vinyls.ui.ArtistListScreen
 import com.example.vinyls.ui.CollectorDetailFragment
 import com.example.vinyls.ui.CollectorsListScreen
@@ -54,6 +55,18 @@ fun AppNavHost(navController: NavHostController) {
             }
             composable("artists") {
                 ArtistListScreen(navController = navController)
+            }
+            composable(
+                route = "artist_detail/{artistId}",
+                arguments = listOf(
+                    navArgument("artistId") {
+                        type = NavType.IntType
+                        nullable = false
+                    }
+                )
+            ) { backStackEntry ->
+                val artistId = backStackEntry.arguments?.getInt("artistId") ?: return@composable
+                ArtistDetailScreen(navController = navController, artistId = artistId)
             }
             composable("collectors") {
                 CollectorsListScreen(navController = navController)

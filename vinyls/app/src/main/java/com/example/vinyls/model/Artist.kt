@@ -7,10 +7,19 @@ data class Artist(
     val description: String?,
     val birthDate: String? = null,
     val creationDate: String? = null,
-    val albums: List<ArtistAlbum>? = null
+    val monthlyListeners: Int? = null,
+    val albums: List<ArtistAlbum> = emptyList(),
+    val performerPrizes: List<PerformerPrize> = emptyList()
 )
 
 data class ArtistAlbum(
     val id: Int,
-    val name: String
+    val name: String,
+    val cover: String? = null,
+    val releaseDate: String? = null,
+)
+
+data class PerformerPrize(
+    val id: Int,
+    val premiationDate: String?
 )
