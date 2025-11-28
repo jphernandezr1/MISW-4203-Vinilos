@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.vinyls.ui.ArtistListScreen
 import org.junit.Before
@@ -22,9 +23,8 @@ class ArtistsListScreenTest {
         fun setUp() {
             // Set the graph before using it
             composeTestRule.setContent {
-                ArtistListScreen(
-                    navController = null,
-                )
+                val navController = rememberNavController()
+                ArtistListScreen(navController = navController)
             }
         }
 
@@ -36,16 +36,10 @@ class ArtistsListScreenTest {
                 .assertIsDisplayed()
         }
         @Test
-        fun artistsScreen_displaysMusicalTasteTags() {
+        fun artistsScreen_showsSearchField() {
             composeTestRule
-                .onNodeWithText("Location")
+                .onNodeWithText("Search artists")
                 .assertIsDisplayed()
-
-            composeTestRule
-                .onNodeWithText("Genres")
-                .assertIsDisplayed()
-
-
         }
 
 

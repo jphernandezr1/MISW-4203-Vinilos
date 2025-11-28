@@ -3,7 +3,6 @@ package com.example.vinyls.repositories
 import android.app.Application
 import android.util.Log
 import com.example.vinyls.model.Artist
-import com.example.vinyls.model.Collector
 import com.example.vinyls.network.CacheManager
 import com.example.vinyls.network.NetworkServiceAdapter
 
@@ -23,4 +22,7 @@ class ArtistsRepository(val application: Application) {
         }
     }
 
+    suspend fun getArtistDetail(artistId: Int): Artist {
+        return NetworkServiceAdapter.getInstance(application).getArtistById(artistId)
+    }
 }
