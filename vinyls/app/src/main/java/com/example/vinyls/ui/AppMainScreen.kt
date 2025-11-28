@@ -15,6 +15,7 @@ import com.example.vinyls.ui.AlbumsScreen
 import com.example.vinyls.ui.ArtistListScreen
 import com.example.vinyls.ui.CollectorDetailFragment
 import com.example.vinyls.ui.CollectorsListScreen
+import com.example.vinyls.ui.CreateAlbumScreen
 
 
 @Composable
@@ -73,6 +74,10 @@ fun AppNavHost(navController: NavHostController) {
                     navController = navController,
                     collectorId = collectorId
                 )
+            }
+
+            composable(route = "album/create") {
+                CreateAlbumScreen(navController = navController)
             }
         }
     }
