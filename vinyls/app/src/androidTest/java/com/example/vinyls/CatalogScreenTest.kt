@@ -1,5 +1,6 @@
 package com.example.vinyls
 
+import android.annotation.SuppressLint
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
@@ -37,6 +38,7 @@ class CatalogScreenTest {
         }
     }
 
+    @SuppressLint("CheckResult")
     @Test
     fun catalog_showsGrid_and_firstCardsHaveCoverAndTitle_andAreClickable() {
         // Avoid ambiguity with bottom nav label also named "Catalog" by targeting a testTag
