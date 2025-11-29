@@ -1,5 +1,6 @@
 package com.example.vinyls.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,13 +26,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.vinyls.model.Album
 import com.example.vinyls.model.Track
 import com.example.vinyls.viewmodel.AlbumDetailUiState
 import com.example.vinyls.viewmodel.AlbumDetailViewModel
@@ -50,20 +55,49 @@ fun AlbumDetailScreen(
     viewModel: AlbumDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val tracksUpdatedState = remember(savedStateHandle) {
+        savedStateHandle?.getStateFlow("tracks_updated", false)
+    }
+    val tracksUpdated by tracksUpdatedState?.collectAsState(initial = false)
+        ?: remember { mutableStateOf(false) }
+    val successMessageState = remember(savedStateHandle) {
+        savedStateHandle?.getStateFlow("tracks_success_message", "")
+    }
+    val trackSuccessMessage by successMessageState?.collectAsState(initial = "")
+        ?: remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(albumId) {
         viewModel.loadAlbum(albumId)
+    }
+
+    LaunchedEffect(tracksUpdated) {
+        if (tracksUpdated) {
+            viewModel.loadAlbum(albumId, forceReload = true)
+            savedStateHandle?.set("tracks_updated", false)
+        }
+    }
+
+    LaunchedEffect(trackSuccessMessage) {
+        if (trackSuccessMessage.isNotBlank()) {
+            Toast.makeText(context, trackSuccessMessage, Toast.LENGTH_SHORT).show()
+            savedStateHandle?.set("tracks_success_message", "")
+        }
     }
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         when {
             uiState.isLoading -> DetailLoadingState()
             uiState.errorMessage != null -> DetailErrorState(uiState.errorMessage) {
-                viewModel.loadAlbum(albumId)
+                viewModel.loadAlbum(albumId, forceReload = true)
             }
             uiState.album != null -> AlbumDetailContent(
                 uiState,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onAddTracks = { album ->
+                    navController.navigate("album_detail/${album.id}/add_tracks")
+                }
             )
         }
     }
@@ -92,7 +126,8 @@ private fun DetailErrorState(message: String?, onRetry: () -> Unit) {
 @Composable
 private fun AlbumDetailContent(
     uiState: AlbumDetailUiState,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onAddTracks: (Album) -> Unit
 ) {
     val album = uiState.album ?: return
     val scrollState = rememberScrollState()
@@ -171,6 +206,17 @@ private fun AlbumDetailContent(
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(
+                onClick = { onAddTracks(album) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("album_detail_add_tracks_button"),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB347FF))
+            ) {
+                Text("Add Tracks", fontWeight = FontWeight.SemiBold)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
                 onClick = { /* TODO */ },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -230,8 +276,9 @@ private fun TrackRow(number: Int, track: Track) {
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val trackLabel = track.trackNumber ?: number
             Text(
-                text = "$number.",
+                text = "$trackLabel.",
                 color = Color(0xFFB7A1D8),
                 modifier = Modifier.padding(end = 16.dp)
             )

@@ -16,7 +16,8 @@ data class Album(
 data class Track(
     val id: Int,
     val name: String,
-    val duration: String?
+    val duration: String?,
+    val trackNumber: Int? = null
 )
 
 data class Performer(
