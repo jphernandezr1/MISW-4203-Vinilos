@@ -19,10 +19,10 @@ class AlbumDetailViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState
 
-    fun loadAlbum(albumId: Int) {
-        // Avoid refetch on same id when configuration changes
+    fun loadAlbum(albumId: Int, forceReload: Boolean = false) {
+        // Avoid refetch on same id when configuration changes unless forced
         val currentAlbum = _uiState.value.album
-        if (currentAlbum?.id == albumId && !_uiState.value.isLoading) return
+        if (!forceReload && currentAlbum?.id == albumId && !_uiState.value.isLoading) return
 
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
