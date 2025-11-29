@@ -278,7 +278,9 @@ private fun TrackFormCard(
                 onValueChange = onTitleChange,
                 label = { Text("Track Title") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("add_tracks_title_input_${index}")
             )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
@@ -286,7 +288,9 @@ private fun TrackFormCard(
                 onValueChange = onDurationChange,
                 label = { Text("Duration (e.g., 3:45)") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("add_tracks_duration_input_${index}")
             )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
@@ -294,7 +298,9 @@ private fun TrackFormCard(
                 onValueChange = onNumberChange,
                 label = { Text("Track Number") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("add_tracks_number_input_${index}")
             )
         }
     }
