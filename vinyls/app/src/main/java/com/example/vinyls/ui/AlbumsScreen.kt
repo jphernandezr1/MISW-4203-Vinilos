@@ -12,14 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -80,6 +84,14 @@ fun AlbumsScreen(
                 FilterChipPlaceholder(text = "Genre")
                 FilterChipPlaceholder(text = "Artist")
                 FilterChipPlaceholder(text = "Price")
+            }
+
+            Button(
+                onClick = { navController.navigate("album/create") },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB347FF)),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("addAlbumButton")
+            ) {
+                Text("Add New Album", fontWeight = FontWeight.SemiBold)
             }
 
             Text(text = "Featured", modifier = Modifier.padding(top = 16.dp, bottom = 8.dp), color = Color.White)

@@ -10,11 +10,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.vinyls.ui.AddTracksScreen
 import com.example.vinyls.ui.AlbumDetailScreen
 import com.example.vinyls.ui.AlbumsScreen
+import com.example.vinyls.ui.ArtistDetailScreen
 import com.example.vinyls.ui.ArtistListScreen
 import com.example.vinyls.ui.CollectorDetailFragment
 import com.example.vinyls.ui.CollectorsListScreen
+import com.example.vinyls.ui.CreateAlbumScreen
 
 
 @Composable
@@ -51,8 +54,32 @@ fun AppNavHost(navController: NavHostController) {
                 val albumId = backStackEntry.arguments?.getInt("albumId") ?: return@composable
                 AlbumDetailScreen(navController = navController, albumId = albumId)
             }
+            composable(
+                route = "album_detail/{albumId}/add_tracks",
+                arguments = listOf(
+                    navArgument("albumId") {
+                        type = NavType.IntType
+                        nullable = false
+                    }
+                )
+            ) { backStackEntry ->
+                val albumId = backStackEntry.arguments?.getInt("albumId") ?: return@composable
+                AddTracksScreen(navController = navController, albumId = albumId)
+            }
             composable("artists") {
                 ArtistListScreen(navController = navController)
+            }
+            composable(
+                route = "artist_detail/{artistId}",
+                arguments = listOf(
+                    navArgument("artistId") {
+                        type = NavType.IntType
+                        nullable = false
+                    }
+                )
+            ) { backStackEntry ->
+                val artistId = backStackEntry.arguments?.getInt("artistId") ?: return@composable
+                ArtistDetailScreen(navController = navController, artistId = artistId)
             }
             composable("collectors") {
                 CollectorsListScreen(navController = navController)
@@ -73,6 +100,10 @@ fun AppNavHost(navController: NavHostController) {
                     navController = navController,
                     collectorId = collectorId
                 )
+            }
+
+            composable(route = "album/create") {
+                CreateAlbumScreen(navController = navController)
             }
         }
     }
